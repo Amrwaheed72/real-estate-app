@@ -7,6 +7,14 @@ module.exports = {
   presets: [require('nativewind/preset')],
   theme: {
     extend: {
+      fontFamily: {
+        rubik: ['Rubik-Regular', 'sans-serif'],
+        'rubik-medium': ['rubik-medium', 'sans-serif'],
+        'rubik-bold': ['rubik-bold', 'sans-serif'],
+        'rubik-light': ['rubik-light', 'sans-serif'],
+        'rubik-semiBold': ['rubik-semiBold', 'sans-serif'],
+        'rubik-extraBold': ['rubik-extraBold', 'sans-serif'],
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

@@ -1,5 +1,5 @@
 import { DarkTheme, DefaultTheme, type Theme } from '@react-navigation/native';
- 
+
 export const THEME = {
   light: {
     background: 'hsl(0 0% 100%)',
@@ -28,9 +28,11 @@ export const THEME = {
     chart5: 'hsl(27 87% 67%)',
   },
   dark: {
-    background: 'hsl(0 0% 3.9%)',
+    // background: 'hsl(0 0% 3.9%)',
+    background: 'hsl(230 33% 10%)',
     foreground: 'hsl(0 0% 98%)',
-    card: 'hsl(0 0% 3.9%)',
+    card: 'hsl(230 33% 10%)',
+    // card: 'hsl(0 0% 3.9%)',
     cardForeground: 'hsl(0 0% 98%)',
     popover: 'hsl(0 0% 3.9%)',
     popoverForeground: 'hsl(0 0% 98%)',
@@ -54,7 +56,7 @@ export const THEME = {
     chart5: 'hsl(340 75% 55%)',
   },
 };
- 
+
 export const NAV_THEME: Record<'light' | 'dark', Theme> = {
   light: {
     ...DefaultTheme,
