@@ -1,11 +1,12 @@
-import { Image, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import onboarding from '@/assets/images/onboarding.png';
+import onboarding from '@/assets/images/onboarding.webp';
 import Google from '@/assets/icons/google.png';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/store/useAuth';
 import * as Burnt from 'burnt';
+import { Image } from 'expo-image';
 const Signin = () => {
   const login = useAuth((state) => state.login);
 
@@ -25,16 +26,16 @@ const Signin = () => {
   return (
     <SafeAreaView className="flex-1">
       <ScrollView contentContainerClassName="h-full">
-        <Image source={onboarding} className={`h-4/6 w-full`} resizeMode="contain" />
+        <Image source={onboarding} transition={1000} className={`h-4/6 w-full`} contentFit="cover" />
         <View className="px-10">
-          <Text className="font-rubik text-center text-base uppercase text-black/60 dark:text-white/60">
+          <Text className="text-center font-rubik text-base uppercase text-black/60 dark:text-white/60">
             Welcome to Statelify
           </Text>
-          <Text className="font-rubik-bold mt-2 text-center text-3xl">
+          <Text className="mt-2 text-center font-rubik-bold text-3xl">
             Let's Get You Closer to {'\n'}
             <Text className="text-3xl text-blue-500">Your Ideal Home</Text>
           </Text>
-          <Text className="font-rubik mt-6 text-center text-lg text-black/60 dark:text-white/60">
+          <Text className="mt-6 text-center font-rubik text-lg text-black/60 dark:text-white/60">
             Login to Statelify with Google
           </Text>
           <Button

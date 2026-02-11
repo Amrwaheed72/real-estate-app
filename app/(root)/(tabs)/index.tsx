@@ -1,50 +1,72 @@
-import FeaturedCard from '@/components/FeaturedCard';
-import Search from '@/components/Search';
-import ThemeToggle from '@/components/ThemeToggle';
-import { Icon } from '@/components/ui/icon';
-import { Text } from '@/components/ui/text';
-import { useAuth } from '@/store/useAuth';
-import { Bell } from 'lucide-react-native';
-import { Image, TouchableOpacity, View } from 'react-native';
+import NormalCard from '@/components/NormalCard';
+import { FlatList, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-const SCREEN_OPTIONS = {
-  title: 'React Native Reusables',
-  headerTransparent: true,
-  headerRight: () => <ThemeToggle />,
-};
+import ErrorFallback from '@/components/ErrorFallback';
+import Empty from '@/components/Empty';
+import { useLocalSearchParams } from 'expo-router';
+import useGetAllProperties from '@/hooks/useGetAllProperties';
+import { PropertiesCollection } from '@/types/apiTypes';
+import FeaturedComponent from '@/components/FeaturedComponent';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function Screen() {
-  const user = useAuth((state) => state.user);
-  const { avatar, name } = user!;
+  const params = useLocalSearchParams<{ query: string; filter?: string }>();
+  const { data, isPending, error, refetch } = useGetAllProperties(params.filter!, params.query, 6);
+
+  if (error) return <ErrorFallback error={error?.message!} refetch={refetch} />;
+  const loadingData = [1, 2, 3, 4] as any;
   return (
+    // this for displaying a skeleton that matches the displayed cards
     <SafeAreaView className="flex-1">
-      <Text>Home</Text>
-      <ThemeToggle />
-      <View className="px-5">
-        <View className="mt-5 flex-row items-center justify-between">
-          <View className="flex-row items-center">
-            <Image source={{ uri: avatar }} className="size-12 rounded-full" resizeMode="contain" />
-            <View className="ml-2 items-start justify-center">
-              <Text className="font-rubik text-xs text-gray-600 dark:text-gray-400">
-                Good Morning
-              </Text>
-              <Text className="font-rubik-medium text-base">{name}</Text>
-            </View>
-          </View>
-          <Icon as={Bell} size={24} />
-        </View>
-        <Search />
-        <View className="my-5">
-          <View className="flex-row items-center justify-between">
-            <Text className="font-rubik-bold text-xl">Featured</Text>
-            <TouchableOpacity>
-              <Text className="font-rubik-bold text-base text-blue-400">See All</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        <FeaturedCard />
-      </View>
+      <FlatList
+        data={isPending ? loadingData : data}
+        keyExtractor={(item, index) =>
+          isPending ? index.toString() : (item as PropertiesCollection).$id
+        }
+        numColumns={2}
+        contentContainerClassName="pb-32"
+        columnWrapperClassName="gap-4 px-4"
+        ListEmptyComponent={!isPending ? <Empty /> : null}
+        showsVerticalScrollIndicator={false}
+        ListHeaderComponent={FeaturedComponent}
+        renderItem={({ item }) => {
+          if (isPending) {
+            return (
+              <View className="mb-2 mt-4 h-52 w-full flex-1 rounded-lg">
+                <Skeleton className="h-full w-full rounded-lg bg-gray-200 dark:bg-gray-700" />
+              </View>
+            );
+          }
+          return <NormalCard item={item as PropertiesCollection} />;
+        }}
+      />
     </SafeAreaView>
+
+    // this for displaying a spinner
+    // <SafeAreaView className="flex-1">
+    //   <FlatList
+    //     data={data}
+    //     keyExtractor={(item, index) =>
+    //       isPending ? index.toString() : (item as PropertiesCollection).$id
+    //     }
+    //     numColumns={2}
+    //     contentContainerClassName="pb-32"
+    //     columnWrapperClassName="gap-4 px-4"
+    //     ListEmptyComponent={
+    //       isPending ? (
+    //         <View className="mb-2 mt-4 h-52 w-full flex-1 rounded-lg">
+    //           <Skeleton className="h-full w-full rounded-lg bg-gray-200 dark:bg-gray-700" />
+    //         </View>
+    //       ) : (
+    //         <Empty />
+    //       )
+    //     }
+    //     showsVerticalScrollIndicator={false}
+    //     ListHeaderComponent={FeaturedComponent}
+    //     renderItem={({ item }) => {
+    //       return <NormalCard item={item as PropertiesCollection} />;
+    //     }}
+    //   />
+    // </SafeAreaView>
   );
 }

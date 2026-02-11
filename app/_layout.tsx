@@ -10,6 +10,8 @@ import { useEffect } from 'react';
 export { ErrorBoundary } from 'expo-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import RouteGuard from '@/components/RouteGuard';
+import { cssInterop } from "nativewind";
+import { Image } from "expo-image";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,6 +20,9 @@ const queryClient = new QueryClient({
       staleTime: 5 * 60 * 1000,
     },
   },
+});
+cssInterop(Image, {
+  className: 'style',
 });
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
