@@ -10,7 +10,6 @@ export type Facility =
   | 'Wifi'
   | 'Pet-center';
 export interface PropertiesCollection extends Models.Document {
-  $id: string;
   name: string;
   type: 'House' | 'Villa' | 'Townhouse' | 'Duplex' | 'Studio' | 'Apartment' | 'Condo' | 'Other';
   description: string;
@@ -26,4 +25,17 @@ export interface PropertiesCollection extends Models.Document {
   agent: string;
   gallery: string;
   reviews: string;
+}
+
+export interface AgentCollection extends Models.Document {
+  name: string;
+  email: string;
+  avatar: string;
+}
+export interface ReviewsCollection extends Models.Document {
+  name: string;
+  avatar: string;
+  review: string;
+  rating: number;
+  property: string;
 }

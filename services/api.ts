@@ -1,7 +1,7 @@
 import { Query } from 'react-native-appwrite';
 import { databases } from '../lib/appwrite';
 import { config } from '../lib/appwrite';
-import { PropertiesCollection } from '@/types/apiTypes';
+import { AgentCollection, PropertiesCollection, ReviewsCollection } from '@/types/apiTypes';
 
 const {
   databaseId,
@@ -46,6 +46,36 @@ export const getProperties = async (
     }
     const response = await databases.listDocuments(databaseId, propertiesCollectionId, buildQuery);
     return response.documents as unknown as PropertiesCollection[];
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getPropertyDetails = async (id: string) => {
+  try {
+    const response = await databases.getDocument(databaseId, propertiesCollectionId, id);
+    return response as unknown as PropertiesCollection;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getAgent = async (id: string) => {
+  try {
+    const response = await databases.getDocument(databaseId, agentsCollectionId, id);
+    return response as unknown as AgentCollection;
+  } catch (error) {
+    throw error;
+  }
+};
+export const getReviews = async (id: string, limit?: number) => {
+  try {
+    const response = await databases.listDocuments(databaseId, reviewsCollectionId, [
+      Query.equal('property', id),
+      Query.limit(limit || 0),
+      Query.orderDesc('$createdAt'),
+    ]);
+    return response.documents as unknown as ReviewsCollection[];
   } catch (error) {
     throw error;
   }
