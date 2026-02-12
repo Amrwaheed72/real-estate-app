@@ -1,34 +1,21 @@
 import ErrorFallback from '@/components/ErrorFallback';
 import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
-import { Text } from '@/components/ui/text';
 import useGetAgent from '@/hooks/useGetAgent';
 import useGetPropertyDetails from '@/hooks/useGetPropertyDetails';
-import { facilitiesIconMapping, getCoordinates } from '@/lib/helpers';
 import { Image } from 'expo-image';
 import { router, useLocalSearchParams } from 'expo-router';
-import MapView, { Marker } from 'react-native-maps';
-import {
-  ArrowDown,
-  ArrowLeft,
-  Bed,
-  Heart,
-  LucideIcon,
-  MessageCircle,
-  Phone,
-  Send,
-  Share,
-  SquareDashed,
-  Star,
-  ThumbsDown,
-  ThumbsUp,
-  Toilet,
-} from 'lucide-react-native';
+import { ArrowLeft, Heart, Send } from 'lucide-react-native';
 import { useRef, useState } from 'react';
-import { FlatList, ScrollView, TouchableOpacity, View } from 'react-native';
+import { FlatList, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import useGetReviews from '@/hooks/useGetReviews';
-import { Button } from '@/components/ui/button';
+import PropertyInfo from '@/components/PropertyInfo';
+import AgentInfo from '@/components/AgentInfo';
+import ReviewsSection from '@/components/ReviewsSection';
+import FacilitiesSection from '@/components/FacilitiesSection';
+import LocationSection from '@/components/LocationSection';
+import BookingSection from '@/components/BookingSection';
 
 const propertyImages = [
   {
@@ -54,7 +41,6 @@ const Property = () => {
   const { id } = useLocalSearchParams();
   const { data, isPending, error, refetch } = useGetPropertyDetails(id as string);
   const {
-    data: agentData,
     isPending: isLoadingAgent,
     error: errorAgent,
     refetch: refetchAgent,
@@ -75,25 +61,8 @@ const Property = () => {
   if (errorReview) return <ErrorFallback error={errorReview.message} refetch={refetchReview} />;
   if (isPending || isLoadingAgent || isLoadingReview) return <Spinner variant="ring" size="lg" />;
 
-  const {
-    bedrooms,
-    type,
-    name,
-    description,
-    address,
-    price,
-    rating,
-    area,
-    bathrooms,
-    facilities,
-    geolocation,
-    gallery,
-  } = data!;
-  const { name: agentName, email, avatar, $id: agentId } = agentData!;
-  const testCoords = {
-    latitude: 40.785091,
-    longitude: -73.968285,
-  };
+  const { address, price, rating, facilities } = data!;
+
   return (
     <SafeAreaView className="flex-1">
       <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="pb-32">
@@ -137,153 +106,17 @@ const Property = () => {
         </View>
         <View className="p-5">
           <View className="gap-4">
-            {/* property info */}
-            <View className="gap-4">
-              <Text className="text-xl font-bold">{name}</Text>
-              <View className="flex-row gap-6 px-2">
-                <Text className="font-rubik-extraBold text-blue-600/80">{type}</Text>
-                <View className="flex-row items-center gap-2">
-                  <Icon as={Star} size={18} className="text-yellow-400" strokeWidth={3} />
-                  <Text className="font-rubik-medium">{rating}</Text>
-                  <Text className="text-gray-500 dark:text-gray-400">
-                    ({reviewsData?.length} reviews)
-                  </Text>
-                </View>
-              </View>
-              <View className="mt-2 flex-row items-center justify-between px-2">
-                <View className="flex-row items-center gap-2">
-                  <Icon as={Bed} size={22} className="text-blue-500" />
-                  <Text className="font-rubik-medium text-sm">{bedrooms} Beds</Text>
-                </View>
-                <View className="flex-row items-center gap-2">
-                  <Icon as={Toilet} size={22} className="text-blue-500" />
-                  <Text className="font-rubik-medium text-sm">{bathrooms} Bathrooms</Text>
-                </View>
-                <View className="flex-row items-center gap-2">
-                  <Icon as={SquareDashed} size={22} className="text-blue-500" />
-                  <Text className="font-rubik-medium text-sm">{area} Sqft</Text>
-                </View>
-              </View>
-            </View>
-            {/*  agent info */}
-            <View className="mt-10 gap-2">
-              <Text className="text-xl font-bold">{agentName}</Text>
-              <View className="flex-row items-center justify-between">
-                <View className="flex-row items-center gap-5">
-                  <Image source={{ uri: avatar }} className="size-14 rounded-full" />
-                  <View>
-                    <Text className="font-rubik-bold">{agentName}</Text>
-                    <Text className="font-rubik-medium text-gray-400">Owner</Text>
-                  </View>
-                </View>
-                <View className="flex-row items-center gap-4">
-                  <Icon as={MessageCircle} size={24} className="text-gray-400" />
-                  <Icon as={Phone} size={24} className="text-gray-400" />
-                </View>
-              </View>
-            </View>
-            {/* overview */}
-            <View className="mt-5 gap-2">
-              <Text className="text-xl font-bold">Overview</Text>
-              <Text className="text-gray-400">{description}</Text>
-            </View>
-            {/* Facilities */}
-            <View className="mt-5 gap-4">
-              <Text className="text-xl font-bold">Facilities</Text>
-              <View className="w-full flex-row flex-wrap">
-                {facilities.map((one) => {
-                  const icon = facilitiesIconMapping(one) as LucideIcon;
-                  return (
-                    <View key={one} className="mb-4 w-[84px] items-center justify-center gap-2">
-                      <Icon as={icon} className="text-blue-500" size={30} />
-                      <Text className="text-xs">{one}</Text>
-                    </View>
-                  );
-                })}
-              </View>
-            </View>
+            <PropertyInfo id={id as string} reviewDataLength={reviewsData?.length!} />
+            <AgentInfo agentId={data?.agent!} />
+            <FacilitiesSection facilities={facilities} />
             {/* Location */}
-            <View className="mt-2 gap-4">
-              <Text className="text-xl font-bold">Location</Text>
-              <Text className="text-xl font-bold">{address}</Text>
-              <Text className="mb-3 font-rubik-bold text-xl">Location</Text>
-
-              <View className="h-52 w-full overflow-hidden rounded-2xl border border-gray-200">
-                <MapView
-                  style={{ width: '100%', height: '100%' }}
-                  initialRegion={{
-                    latitude: testCoords.latitude,
-                    longitude: testCoords.longitude,
-                    latitudeDelta: 0.01,
-                    longitudeDelta: 0.01,
-                  }}>
-                  <Marker coordinate={testCoords} title="Test Property" />
-                </MapView>
-              </View>
-            </View>
+            <LocationSection address={address} />
             {/* reviews */}
-            <View className="mt-5 gap-4">
-              <View className="flex-row items-center justify-between">
-                <View className="flex-row items-center justify-between gap-2">
-                  <Icon as={Star} size={26} className="text-yellow-400" strokeWidth={3} />
-                  <Text className="font-rubik-medium text-xl">{rating}</Text>
-                  <Text className="font-rubik-medium text-xl">({reviewsData?.length} reviews)</Text>
-                </View>
-                <TouchableOpacity>
-                  <Text className="font-rubik-bold text-base text-blue-400">See All</Text>
-                </TouchableOpacity>
-              </View>
-              <View className="gap-4">
-                {reviewsData?.map((review, i) => (
-                  <View
-                    key={review.$id}
-                    className={`gap-4 py-4 ${reviewsData.length - 1 === i ? '' : 'border-b border-black/40 dark:border-white/40'}`}>
-                    <View className="flex-row items-center justify-between">
-                      <View className="flex-row items-center gap-2">
-                        <Image source={{ uri: review.avatar }} className="size-12 rounded-full" />
-                        <Text className="mb-1 font-rubik-medium text-gray-800 dark:text-gray-200">
-                          {review.name}
-                        </Text>
-                      </View>
-
-                      <View className="flex-row items-center gap-1">
-                        <Icon as={Star} size={16} className="text-yellow-400" strokeWidth={3} />
-                        <Text className="font-rubik-medium">{review.rating}</Text>
-                      </View>
-                    </View>
-                    <Text className="text-gray-400">{review.review}</Text>
-                    <View className="flex-row items-center justify-between">
-                      <View className="flex-row items-center gap-4">
-                        <Icon as={ThumbsUp} size={18} />
-                        <Icon as={ThumbsDown} size={18} />
-                      </View>
-                      <Text className="text-xs text-gray-500 dark:text-gray-400">
-                        {new Date(review.$createdAt).toLocaleDateString()}
-                      </Text>
-                    </View>
-                  </View>
-                ))}
-              </View>
-            </View>
+            <ReviewsSection id={id as string} rating={rating} />
           </View>
         </View>
       </ScrollView>
-      <View className="absolute bottom-0 left-0 h-36 w-full rounded-tl-2xl rounded-tr-2xl bg-gray-200 dark:bg-gray-800">
-        <View className="flex-1 flex-row items-center justify-between px-12 pb-12">
-          <View className="gap-2">
-            <Text className="text-xs text-gray-500 dark:text-gray-400">Price</Text>
-            <Text className="font-rubik-bold text-xl text-blue-500 dark:text-blue-400">
-              ${price}
-            </Text>
-          </View>
-          <Button
-            variant={null}
-            size={'lg'}
-            className="w-48 rounded-md bg-blue-600 transition-colors active:bg-blue-700 dark:border-gray-200/20">
-            <Text className="text-white font-rubik-medium">Book Now</Text>
-          </Button>
-        </View>
-      </View>
+      <BookingSection price={price} />
     </SafeAreaView>
   );
 };

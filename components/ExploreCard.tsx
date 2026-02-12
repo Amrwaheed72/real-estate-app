@@ -6,10 +6,11 @@ import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { Text } from './ui/text';
 
+import { useLocalFavorite } from '@/hooks/useLocalFavorite';
 const ExploreCard = ({ item }: { item: PropertiesCollection }) => {
-  const { name, type, price, rating, address, image, $id } = item;
+  const { name, price, rating, address, image, $id, is_favorite } = item;
+  const { isFavorite, handleToggleMarked } = useLocalFavorite(is_favorite, $id);
   const imagePlaceholder = image.replace('w=640', 'w=50').replace('q=60', 'q=1');
-
   const handleCardPress = (id: string) => {
     router.push(`/properties/${id}`);
   };
@@ -42,7 +43,13 @@ const ExploreCard = ({ item }: { item: PropertiesCollection }) => {
         </Text>
       </View>
       <View className="mt-2 items-center justify-between">
-        <Icon as={Heart} size={18} className="text-black dark:text-white" />
+        <TouchableOpacity className="p-2" onPress={handleToggleMarked}>
+          <Icon
+            as={Heart}
+            size={18}
+            className={`text-black dark:text-white ${isFavorite && 'fill-blue-500 stroke-blue-500'} `}
+          />
+        </TouchableOpacity>
         <Text className="font-rubik-bold text-base text-blue-400 dark:text-blue-300">${price}</Text>
       </View>
     </TouchableOpacity>
