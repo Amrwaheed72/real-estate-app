@@ -12,9 +12,7 @@ interface Props {
 }
 const NormalCard = memo(({ item }: Props) => {
   const { name, rating, image, address, price, $id } = item;
-
   const imagePlaceholder = image.replace('w=640', 'w=50').replace('q=60', 'q=1');
-
   const handleCardPress = (id: string) => {
     router.push(`/properties/${id}`);
   };
@@ -43,7 +41,6 @@ const NormalCard = memo(({ item }: Props) => {
           <Text className="font-rubik-bold text-base text-blue-400 dark:text-blue-300">
             ${price}
           </Text>
-          <Icon as={Heart} size={18} className="text-black dark:text-white" />
         </View>
       </View>
     </TouchableOpacity>

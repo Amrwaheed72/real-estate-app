@@ -7,16 +7,20 @@ import { PropertiesCollection } from '@/types/apiTypes';
 import { Image } from 'expo-image';
 import { memo } from 'react';
 import { router } from 'expo-router';
+import { useLocalFavorite } from '@/hooks/useLocalFavorite';
 
 interface Props {
   item: PropertiesCollection;
 }
 const FeaturedCard = memo(({ item }: Props) => {
-  const { image, rating, name, price, address, $id } = item;
+  const { image, rating, name, price, address, $id, is_favorite } = item;
+  const { isFavorite,  handleToggleMarked } = useLocalFavorite(is_favorite, $id);
+
   const imagePlaceholder = image.replace('q=60', 'q=1').replace('w=640', 'w=50');
   const handleCardPress = (id: string) => {
     router.push(`/properties/${id}`);
   };
+console.log(isFavorite);
   return (
     <TouchableOpacity
       onPress={() => handleCardPress($id)}
@@ -50,7 +54,13 @@ const FeaturedCard = memo(({ item }: Props) => {
         <Text className="font-rubik text-xs text-white">{address}</Text>
         <View className="w-full flex-row items-center justify-between">
           <Text className="font-rubik-extraBold text-sm text-white">${price}</Text>
-          <Icon as={Heart} size={20} />
+          <TouchableOpacity className="p-2" onPress={handleToggleMarked}>
+            <Icon
+              as={Heart}
+              size={20}
+            className={`text-black dark:text-white ${isFavorite && 'fill-blue-500 stroke-blue-500'} `}
+            />
+          </TouchableOpacity>
         </View>
       </View>
     </TouchableOpacity>

@@ -14,9 +14,9 @@ export default function Screen() {
   const { data, isPending, error, refetch } = useGetAllProperties(params.filter!, params.query, 6);
 
   if (error) return <ErrorFallback error={error?.message!} refetch={refetch} />;
+
   const loadingData = [1, 2, 3, 4] as any;
   return (
-    // this for displaying a skeleton that matches the displayed cards
     <SafeAreaView className="flex-1">
       <FlatList
         data={isPending ? loadingData : data}
@@ -41,6 +41,24 @@ export default function Screen() {
         }}
       />
     </SafeAreaView>
+
+    // this for displaying a skeleton that wraps thw whole app
+    // <SafeAreaView className="flex-1">
+    //   <FlatList
+    //     data={data}
+    //     keyExtractor={(item) => item.$id}
+    //     numColumns={2}
+    //     contentContainerClassName="pb-32"
+    //     columnWrapperClassName="gap-4 px-4"
+    //     ListEmptyComponent={!isPending ? <Empty /> : null}
+    //     showsVerticalScrollIndicator={false}
+    //     ListHeaderComponent={FeaturedComponent}
+    //     renderItem={({ item }) => {
+    //       return <NormalCard item={item as PropertiesCollection} />;
+    //     }}
+    //   />
+    // </SafeAreaView>
+    // this for displaying a skeleton that matches the displayed cards
 
     // this for displaying a spinner
     // <SafeAreaView className="flex-1">

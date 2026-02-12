@@ -80,3 +80,11 @@ export const getReviews = async (id: string, limit?: number) => {
     throw error;
   }
 };
+export const markFavorite = async (id: string, data: { is_favorite: boolean }) => {
+  try {
+    await databases.updateDocument(databaseId, propertiesCollectionId, id, data);
+    return true;
+  } catch (error) {
+    throw error;
+  }
+};

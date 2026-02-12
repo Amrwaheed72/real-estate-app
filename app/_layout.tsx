@@ -10,8 +10,8 @@ import { useEffect } from 'react';
 export { ErrorBoundary } from 'expo-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import RouteGuard from '@/components/RouteGuard';
-import { cssInterop } from "nativewind";
-import { Image } from "expo-image";
+import { cssInterop } from 'nativewind';
+import { Image } from 'expo-image';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -40,7 +40,6 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
-
   if (!fontsLoaded) return null;
 
   return (

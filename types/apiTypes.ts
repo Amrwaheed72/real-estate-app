@@ -25,6 +25,7 @@ export interface PropertiesCollection extends Models.Document {
   agent: string;
   gallery: string;
   reviews: string;
+  is_favorite: boolean;
 }
 
 export interface AgentCollection extends Models.Document {
